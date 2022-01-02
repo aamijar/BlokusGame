@@ -6,7 +6,7 @@ class Piece:
 
     def __init__(self, matrix: List[List[int]]) -> None:
         self.coords = [[]]
-        self.corners = [set()]
+        self.corners = [[]]
 
         for x in range(len(matrix)):
             for y in range(len(matrix[x])):
@@ -21,7 +21,7 @@ class Piece:
                         if matrix[x - 1][y] == 1 and matrix[x + 1][y] == 1:
                             tb = True
                     if not (lr or tb):
-                        self.corners[0].add((x, y))
+                        self.corners[0].append((x, y))
                     # print((x, y), lr, tb)
 
     def print_piece(self):
@@ -29,8 +29,8 @@ class Piece:
         corners = ["X" for x in range(len(self.corners[0]))]
         edges = ["I" for x in range(len(self.coords[0]))]
         rows, cols = zip(*self.coords[0])
-        # a[rows, cols] = edges
-        print(self.corners[0])
+        a[rows, cols] = edges
+        # print(self.corners[0])
         rows, cols = zip(*self.corners[0])
         a[rows, cols] = corners
         print("")
@@ -48,23 +48,24 @@ class Piece:
         xMin = 0
 
         for x in range(len(self.coords[0])):
-            if self.coords[0][x] in self.corners[0]:
-                self.corners[0].remove(self.coords[0][x])
-                self.corners[0].add((-self.coords[0][x][1], self.coords[0][x][0]))
+            # if self.coords[0][x] in self.corners[0]:
+            #     self.corners[0].remove(self.coords[0][x])
+            #     self.corners[0].add((-self.coords[0][x][1], self.coords[0][x][0]))
 
             self.coords[0][x] = (-self.coords[0][x][1], self.coords[0][x][0])
             if self.coords[0][x][1] < yMin:
                 yMin = self.coords[0][x][1]
             if self.coords[0][x][0] < xMin:
                 xMin = self.coords[0][x][0]
-
+        for x in range(len(self.corners[0])):
+            self.corners[0][x] = (-self.corners[0][x][1] - xMin, self.corners[0][x][0] - yMin)
         for x in range(len(self.coords[0])):
-            if self.coords[0][x] in self.corners[0]:
-                print(self.corners[0], self.coords[0][x])
-                self.corners[0].remove(self.coords[0][x])
-                self.corners[0].add((self.coords[0][x][0] - xMin, self.coords[0][x][1] - yMin))
-                print(self.coords[0][x][0] - xMin, self.coords[0][x][1] - yMin)
-                print(self.corners[0])
+            # if self.coords[0][x] in self.corners[0]:
+            #     print(self.corners[0], self.coords[0][x])
+            #     self.corners[0].remove(self.coords[0][x])
+            #     self.corners[0].add((self.coords[0][x][0] - xMin, self.coords[0][x][1] - yMin))
+            #     print(self.coords[0][x][0] - xMin, self.coords[0][x][1] - yMin)
+            #     print(self.corners[0])
 
             self.coords[0][x] = (self.coords[0][x][0] - xMin, self.coords[0][x][1] - yMin)
 
@@ -73,17 +74,19 @@ class Piece:
         yMin = 0
 
         for x in range(len(self.coords[0])):
-            if self.coords[0][x] in self.corners[0]:
-                self.corners[0].remove(self.coords[0][x])
-                self.corners[0].add((self.coords[0][x][0], -self.coords[0][x][1]))
+            # if self.coords[0][x] in self.corners[0]:
+            #     self.corners[0].remove(self.coords[0][x])
+            #     self.corners[0].add((self.coords[0][x][0], -self.coords[0][x][1]))
 
             self.coords[0][x] = (self.coords[0][x][0], -self.coords[0][x][1])
             if self.coords[0][x][1] < yMin:
                 yMin = self.coords[0][x][1]
+        for x in range(len(self.corners[0])):
+            self.corners[0][x] = (self.corners[0][x][0], -self.corners[0][x][1] - yMin)
         for x in range(len(self.coords[0])):
-            if self.coords[0][x] in self.corners[0]:
-                self.corners[0].remove(self.coords[0][x])
-                self.corners[0].add((self.coords[0][x][0], self.coords[0][x][1] - yMin))
+            # if self.coords[0][x] in self.corners[0]:
+            #     self.corners[0].remove(self.coords[0][x])
+            #     self.corners[0].add((self.coords[0][x][0], self.coords[0][x][1] - yMin))
 
             self.coords[0][x] = (self.coords[0][x][0], self.coords[0][x][1] - yMin)
 
@@ -103,9 +106,9 @@ def main() -> None:
          [1, 1, 0],
          [1, 1, 0]],
 
-        [[0, 0, 0],
+        [[1, 1, 0],
          [1, 1, 0],
-         [1, 1, 0]],
+         [0, 0, 0]],
 
         [[1, 0, 0],
          [1, 1, 0],
