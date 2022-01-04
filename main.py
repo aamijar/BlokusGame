@@ -122,6 +122,34 @@ class Piece:
             print("")
 
 
+class Grid:
+    def __init__(self, rows, cols, players):
+        self.grid = np.zeros((rows, cols), int)
+        self.avail_blocks = {}
+        bl = (rows - 1, cols - 1)
+        for p in range(players):
+            bl = (bl[1], bl[1] + ((p - 1) * ((rows - 1) * (1 - (p % 2)))))
+            self.avail_blocks[p] = [bl]
+
+    def print(self):
+        a = np.asarray(self.grid, str)
+        corners_coords = [y for x in self.avail_blocks for y in self.avail_blocks[x]]
+        corners = ["X" for x in range(len(corners_coords))]
+        rows, cols = zip(*corners_coords)
+        a[rows, cols] = corners
+        print("")
+        for row in a:
+            for col in row:
+                if col == "":
+                    print(".", end=" ")
+                elif col == "0":
+                    print(".", end=" ")
+                else:
+                    print(col, end=" ")
+            print("")
+        print("")
+
+
 # start program here
 def main() -> None:
     blocks = [
@@ -150,6 +178,9 @@ def main() -> None:
     for p in pieces:
         p.all_transformations()
         p.print_all_pieces()
+    g = Grid(5, 5, players=4)
+    print(g.avail_blocks)
+    g.print()
 
 
 if __name__ == '__main__':
