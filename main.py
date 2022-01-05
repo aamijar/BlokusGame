@@ -124,7 +124,7 @@ class Piece:
 
 class Grid:
     def __init__(self, rows, cols, players):
-        self.grid = np.zeros((rows, cols), int)
+        self.grid = np.full((rows, cols), -1)
         self.avail_blocks = {}
         bl = (rows - 1, cols - 1)
         for p in range(players):
@@ -142,12 +142,30 @@ class Grid:
             for col in row:
                 if col == "":
                     print(".", end=" ")
-                elif col == "0":
+                elif col == "-1":
                     print(".", end=" ")
                 else:
                     print(col, end=" ")
             print("")
         print("")
+
+    # startPiece: corner of the piece the player wants to place
+    def isValidMove(self, player: int, startBlock: tuple, startPiece: tuple, pieces: List[tuple]) -> bool:
+        for p in pieces:
+            x = np.subtract(p, startPiece)
+            y = np.add(startBlock, x)
+            if (y[0] >= len(self.grid) or y[0] < 0) or (y[1] >= len(self.grid[0]) or y[1] < 0) \
+                    or self.grid[y[0]][y[1]] != -1:
+                return False
+            if y[1] - 1 >= 0 and self.grid[y[0]][y[1] - 1] == player:
+                return False
+            if y[1] + 1 < len(self.grid[0]) and self.grid[y[0]][y[1] + 1] == player:
+                return False
+            if y[0] - 1 >= 0 and self.grid[y[0] - 1][y[1]] == player:
+                return False
+            if y[0] + 1 < len(self.grid) and self.grid[y[0] + 1][y[1]] == player:
+                return False
+        return True
 
 
 # start program here
@@ -181,6 +199,15 @@ def main() -> None:
     g = Grid(5, 5, players=4)
     print(g.avail_blocks)
     g.print()
+
+    last = pieces[len(pieces) - 1]
+    cornerlast = last.all_corners[len(last.all_corners) - 3]
+    coordslast = last.all_coords[len(last.all_coords) - 3]
+    print(coordslast)
+    print(cornerlast[0])
+    print("")
+    v = g.isValidMove(0, (4, 0), cornerlast[0], coordslast)
+    print(v)
 
 
 if __name__ == '__main__':
