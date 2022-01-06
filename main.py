@@ -167,6 +167,27 @@ class Grid:
                 return False
         return True
 
+    def playPiece(self, player: int, startBlock: tuple, startPiece, pieces: List[tuple], corners: List[tuple]):
+        for p in pieces:
+            y = np.add(startBlock, np.subtract(p, startPiece))
+            self.grid[y[0], y[1]] = player
+        self.avail_blocks[player].remove(startBlock)
+
+        for a in self.avail_blocks[player]:
+            if not self.isValidMove(player, a, (0, 0), [(0, 0)]):
+                self.avail_blocks[player].remove(a)
+
+        for c in corners:
+            y = np.add(startBlock, np.subtract(c, startPiece))
+            if y[1] - 1 >= 0 and y[0] - 1 >= 0 and self.isValidMove(player, (y[0] - 1, y[1] - 1), (0, 0), [(0, 0)]):
+                self.avail_blocks[player].append((y[0] - 1, y[1] - 1))
+            if y[1] - 1 >= 0 and y[0] + 1 < len(self.grid) and self.isValidMove(player, (y[0] + 1, y[1] - 1), (0, 0), [(0, 0)]):
+                self.avail_blocks[player].append((y[0] + 1, y[1] - 1))
+            if y[1] + 1 < len(self.grid[0]) and y[0] - 1 >= 0 and self.isValidMove(player, (y[0] - 1, y[1] + 1), (0, 0), [(0, 0)]):
+                self.avail_blocks[player].append((y[0] - 1, y[1] + 1))
+            if y[1] + 1 < len(self.grid[0]) and y[0] + 1 < len(self.grid) and self.isValidMove(player, (y[0] + 1, y[1] + 1), (0, 0), [(0, 0)]):
+                self.avail_blocks[player].append((y[0] + 1, y[1] + 1))
+
 
 # start program here
 def main() -> None:
@@ -204,11 +225,16 @@ def main() -> None:
     cornerlast = last.all_corners[len(last.all_corners) - 3]
     coordslast = last.all_coords[len(last.all_coords) - 3]
     print(coordslast)
-    print(cornerlast[0])
+    print(cornerlast)
     print("")
     v = g.isValidMove(0, (4, 0), cornerlast[0], coordslast)
-    print(v)
-
+    if v:
+        g.playPiece(0, (4, 0), cornerlast[0], coordslast, cornerlast)
+    g.print()
+    v = g.isValidMove(0, (2, 2), cornerlast[0], coordslast)
+    if v:
+        g.playPiece(0, (2, 2), cornerlast[0], coordslast, cornerlast)
+    g.print()
 
 if __name__ == '__main__':
     main()
